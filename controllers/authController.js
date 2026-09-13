@@ -33,4 +33,20 @@ async function register(req, res, next) {
   }
 }
 
+const passport = require('passport');
+
+function login(req, res, next) {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return next(err);
+    if (!user) return res.status(401).json({ message: info?.message || 'Invalid email or password.' });
+
+    req.login(user, (err) => {
+      if (err) return next(err);
+      return res.status(200).json({ message: 'Logged in.', redirect: '/dashboard' });
+    });
+  })(req, res, next);
+}
+
+module.exports = { register, login }; // update the export line
+
 module.exports = { register };
