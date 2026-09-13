@@ -18,9 +18,11 @@ async function createSubject(req, res, next) {
 
 async function createTask(req, res, next) {
   try {
-    const { subjectId, description, deadline, estimatedEffortHours, priority } = req.body;
-    if (!subjectId || !description || !deadline || !estimatedEffortHours) {
-      return res.status(400).json({ message: 'Subject, description, deadline and effort estimate are required.' });
+    const { subjectId } = req.params; // comes from the URL now, not the body
+    const { description, deadline, estimatedEffortHours, priority } = req.body;
+
+    if (!description || !deadline || !estimatedEffortHours) {
+      return res.status(400).json({ message: 'Description, deadline and effort estimate are required.' });
     }
 
     const subject = await Subject.findOne({ _id: subjectId, user: req.user.id });
@@ -29,7 +31,7 @@ async function createTask(req, res, next) {
     const task = await Task.create({
       user: req.user.id, subject: subjectId, description, deadline, estimatedEffortHours, priority,
     });
-    return res.status(201).json({ task }); // fails here with a clear message if the deadline is in the past — that's the Task model's built-in check doing its job
+    return res.status(201).json({ task });
   } catch (error) {
     if (error.name === 'ValidationError') return res.status(400).json({ message: error.message });
     next(error);
