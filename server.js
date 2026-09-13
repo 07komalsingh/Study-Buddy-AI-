@@ -36,6 +36,8 @@ app.get('/register', (req, res) => {
   res.render('auth/register');
 });
 
+app.get('/api/student', (req, res) => { res.json({ name: 'Komal Singh', studentId: '226497726', }); });
+
 app.use('/study-plan', studyPlanRoutes);
 app.use('/', authRoutes);
 app.get('/dashboard', ensureAuth, (req, res) => res.render('dashboard'));
