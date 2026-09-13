@@ -47,6 +47,13 @@ function login(req, res, next) {
   })(req, res, next);
 }
 
-module.exports = { register, login }; // update the export line
+function logout(req, res, next) {
+  req.logout((err) => {
+    if (err) return next(err);
+    req.session.destroy(() => res.redirect('/login'));
+  });
+}
+module.exports = { register, login, logout };
 
-module.exports = { register };
+
+
