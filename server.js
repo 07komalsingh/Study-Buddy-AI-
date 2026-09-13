@@ -4,6 +4,9 @@ const session = require('express-session');
 const passport = require('./config/passport');
 const connectDB = require('./config/db');
 const studyPlanRoutes = require('./routes/studyPlan');
+const authRoutes = require('./routes/auth');
+const ensureAuth = require('./middleware/ensureAuth');
+const subjectRoutes = require('./routes/subjects');
 const app = express();
 
 connectDB();
@@ -34,23 +37,20 @@ app.get('/register', (req, res) => {
 });
 
 app.use('/study-plan', studyPlanRoutes);
+app.use('/', authRoutes);
+app.get('/dashboard', ensureAuth, (req, res) => res.render('dashboard'));
+app.use('/subjects', subjectRoutes);
 
-// 404 handler for routes that don't exist
+// 404 handler — must come after every real route, since it catches anything unmatched
 app.use((req, res) => {
   res.status(404).send("Sorry, that page doesn't exist.");
 });
 
-// General error-handling middleware
+// General error-handling middleware — always last
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something went wrong on our end. Please try again.');
 });
-
-const authRoutes = require('./routes/auth');
-const ensureAuth = require('./middleware/ensureAuth');
-
-app.use('/', authRoutes);
-app.get('/dashboard', ensureAuth, (req, res) => res.render('dashboard'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
