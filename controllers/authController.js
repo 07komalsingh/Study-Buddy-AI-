@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 const User = require('../models/User');
 
 async function register(req, res, next) {
@@ -33,7 +34,7 @@ async function register(req, res, next) {
   }
 }
 
-const passport = require('passport');
+
 
 function login(req, res, next) {
   passport.authenticate('local', (err, user, info) => {
