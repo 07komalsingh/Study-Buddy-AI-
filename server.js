@@ -46,6 +46,12 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something went wrong on our end. Please try again.');
 });
 
+const authRoutes = require('./routes/auth');
+const ensureAuth = require('./middleware/ensureAuth');
+
+app.use('/', authRoutes);
+app.get('/dashboard', ensureAuth, (req, res) => res.render('dashboard'));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
